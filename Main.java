@@ -24,16 +24,18 @@ public class Main{
 
 
 
-        JButton uploadProjectBtn = new JButton("Upload your Project");
+        JButton uploadProjectBtn = new JButton("Upload your Project"); //Creates the JButton object.
 
+        // We have created an ActionListener this is similar to eventListener in JavaScript, it listens for the click event on the button and executes the code inside the lambda function when the button is clicked.
         uploadProjectBtn.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // This makes sure we can only select directories and not files.
 
-            int result = chooser.showOpenDialog(frame);
+            int result = chooser.showOpenDialog(frame); //This returns an integer value that indicates the user's action. If the user approves the selection, it will return JFileChooser.APPROVE_OPTION. If the user cancels the selection, it will return JFileChooser.CANCEL_OPTION. If an error occurs, it will return JFileChooser.ERROR_OPTION.
             if(result == JFileChooser.APPROVE_OPTION) {
                 System.out.println("Selected : " + chooser.getSelectedFile().getAbsolutePath());
             }
+            //If everything went nicely it will print the absolute path of the selected directory to the console. If the user cancels the selection or an error occurs, it will not print anything.
         });
 
         frame.add(uploadProjectBtn);
