@@ -1,0 +1,29 @@
+// This is the Main.java file, which contains the main method and import of swing library for the implementation of GUI.
+
+import java.awt.Color;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+
+public class Main{
+    final static String s_TITLE = "Code Evolution Simulator";
+    public static void main(String[] args) {
+        JFrame frame = new JFrame(); //Creating JFrame object to create a window for the application. 
+
+        frame.setTitle(s_TITLE); //Setting the title of the frame to "Code Evolution Simulator".
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Setting the default close operation of the frame to EXIT_ON_CLOSE, which means that the application will exit when the user closes the window. (Close refers to clicking the "X" button on the top right corner of the window).
+
+        frame.setResizable(false); //Setting the resizable property of the frame to false, which means that the user will not be able to resize the window.
+
+        frame.setSize(420, 420); //Setting the size of the frame to 420 pixels by 420 pixels.
+
+        frame.setVisible(true); //Setting the visibility of the frame to true so that it can be seen when the application is run.
+
+        ImageIcon icon = new ImageIcon("./Assets/JavaLogo.png"); //Creating an ImageIcon object with the image file "./Assets/JavaLogo.png". This will be used as the icon for the application window.
+
+        frame.setIconImage(icon.getImage()); // Set the image icon.
+
+        frame.getContentPane().setBackground(new Color(0xFF8EFC));
+
+    }
+}

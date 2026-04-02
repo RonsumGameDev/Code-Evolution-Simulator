@@ -1,0 +1,21 @@
+This is a note for all the developers that are going to work on this project.
+
+- Saksham
+- Varun
+- Ananya
+- Chaitanya
+
+I wanted to keep some developments paradigms in order to keep the development in order.
+
+Paradigms :-
+- Add comments above blocks of codes explaining what you've done.
+- Keep the variable names in camelCase.
+- Keep the static variable names as s_variableName.
+
+
+That's it for now.
+
+
+
+Created by : Saksham Dwivedi
+Last Edited by : Saksham Dwivedi, 2nd April 2026
