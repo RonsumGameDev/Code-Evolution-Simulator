@@ -8,9 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseManager {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/evolution_simulator?createDatabaseIfNotExist=true";
-    private static final String USER = "root";
-    private static final String PASS = "yourpassword";
+    private static final String DB_URL = "jdbc:sqlite:evolution.db";
 
     public DatabaseManager() {
         initializeDatabase();
@@ -22,7 +20,7 @@ public class DatabaseManager {
             
             // Create table if it doesn't exist
             String createTableSQL = "CREATE TABLE IF NOT EXISTS evolution_stats ("
-                    + "id INT AUTO_INCREMENT PRIMARY KEY,"
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + "generation INT NOT NULL,"
                     + "population INT NOT NULL,"
                     + "best_fitness INT NOT NULL,"
@@ -37,7 +35,7 @@ public class DatabaseManager {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, USER, PASS);
+        return DriverManager.getConnection(DB_URL);
     }
 
     public void insertGenerationStats(int generation, int population, int bestFitness, double avgFitness, int totalLoc) {
