@@ -35,7 +35,6 @@ public class SimulatorUI extends JFrame {
     // ── GUI components ─────────────────────────────────────────────────────
     private JTextArea    logArea;
     private JScrollPane  logScroll;
-    private JButton      btnInit;
     private JButton      btnOneGen;
     private JButton      btnMultiGen;
     private JButton      btnReset;
@@ -84,14 +83,13 @@ public class SimulatorUI extends JFrame {
                 + "  • Evaluate  → score each module's fitness\n"
                 + "  • Select    → remove the weakest 30%\n"
                 + "  • Reproduce → duplicate the strongest 30%\n"
-                + "  • Mutate    → randomly flip bits in genomes\n\n"
-                + "Press [Initialize CodeBase] to begin!\n");
+                + "  • Mutate    → perform refactoring operations\n\n"
+                + "Click [📂 Load CodeBase] to begin!\n");
     }
 
     // ── Component creation ─────────────────────────────────────────────────
     private void initComponents() {
         // Buttons
-        btnInit     = createButton("🧫  Initialize CodeBase",  FG_GREEN);
         btnOneGen   = createButton("▶   Run One Generation",   FG_ACCENT);
         btnMultiGen = createButton("⏩  Run Multiple Gens",     FG_ACCENT);
         btnReset    = createButton("↺   Reset",                 new Color(230, 90, 90));
@@ -279,8 +277,6 @@ public class SimulatorUI extends JFrame {
 
         addSectionLabel(panel, "⚙  CONTROLS");
         panel.add(Box.createVerticalStrut(8));
-        panel.add(btnInit);
-        panel.add(Box.createVerticalStrut(8));
         panel.add(btnOneGen);
         panel.add(Box.createVerticalStrut(8));
 
@@ -327,20 +323,6 @@ public class SimulatorUI extends JFrame {
         panel.add(Box.createVerticalStrut(8));
         panel.add(btnSaveToDb);
 
-        // Legend
-        panel.add(Box.createVerticalStrut(18));
-        JSeparator sep2 = new JSeparator();
-        sep2.setForeground(BORDER_COL);
-        sep2.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
-        panel.add(sep2);
-        panel.add(Box.createVerticalStrut(14));
-        addSectionLabel(panel, "🔬  LEGEND");
-        panel.add(Box.createVerticalStrut(6));
-        addLegendItem(panel, "BasicModule",    new Color(70, 140, 255));
-        panel.add(Box.createVerticalStrut(4));
-        addLegendItem(panel, "AdvancedModule", new Color(255, 190, 50));
-        panel.add(Box.createVerticalStrut(4));
-        addLegendItem(panel, "LoadedCodeModule", new Color(100, 200, 255));
 
         panel.add(Box.createVerticalGlue());
         return panel;
@@ -415,19 +397,6 @@ public class SimulatorUI extends JFrame {
     // ── Event listeners ────────────────────────────────────────────────────
     private void wireListeners() {
 
-        // Initialize
-        btnInit.addActionListener(e -> {
-            codeBase.initialize();
-            evolutionManager.reset();
-            updateGraphs();
-            updateStats();
-            appendLog("✅ CodeBase initialized with "
-                    + codeBase.size() + " modules.\n\n");
-            btnOneGen.setEnabled(true);
-            btnMultiGen.setEnabled(true);
-            btnReset.setEnabled(true);
-            btnInit.setText("🧫  Re-Initialize");
-        });
 
         // One generation
         btnOneGen.addActionListener(e -> {
@@ -477,8 +446,7 @@ public class SimulatorUI extends JFrame {
             btnOneGen.setEnabled(false);
             btnMultiGen.setEnabled(false);
             btnReset.setEnabled(false);
-            btnInit.setText("🧫  Initialize CodeBase");
-            appendLog("↺  Simulation reset. Press [Initialize CodeBase] to start again.\n\n");
+            appendLog("↺  Simulation reset. Load a codebase to start again.\n\n");
         });
 
         // Load CodeBase from folder
@@ -493,9 +461,12 @@ public class SimulatorUI extends JFrame {
 
         // Save to DB
         btnSaveToDb.addActionListener(e -> {
-            saveGenerationToDB();
-            appendLog("✅ Current generation saved to MySQL.\n\n");
-            JOptionPane.showMessageDialog(this, "Generation saved to MySQL successfully!", "Saved to DB", JOptionPane.INFORMATION_MESSAGE);
+            if (saveGenerationToDB()) {
+                appendLog("✅ Current generation saved to MySQL.\n\n");
+                JOptionPane.showMessageDialog(this, "Generation saved to MySQL successfully!", "Saved to DB", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Cannot save: CodeBase is empty. Please load a codebase first.", "Empty CodeBase", JOptionPane.WARNING_MESSAGE);
+            }
         });
     }
 
@@ -513,9 +484,7 @@ public class SimulatorUI extends JFrame {
             evolutionManager.getBestFitnessHistory(),
             evolutionManager.getAvgFitnessHistory());
 
-        // Max possible fitness depends on module type
-        // AdvancedModule max: genome*3-2; BasicModule max: genome length
-        int maxFit = CodeBase.GENOME_LENGTH * 3;
+        int maxFit = 1;
         for (Module m : codeBase.getModules()) {
             maxFit = Math.max(maxFit, m.getFitnessScore());
         }
@@ -538,7 +507,7 @@ public class SimulatorUI extends JFrame {
         }
     }
 
-    private void saveGenerationToDB() {
+    private boolean saveGenerationToDB() {
         if (!codeBase.isEmpty()) {
             dbManager.insertGenerationStats(
                 evolutionManager.getGenerationCount(),
@@ -548,7 +517,9 @@ public class SimulatorUI extends JFrame {
                 codeBase.getTotalLinesOfCode()
             );
             lblDbCount.setText("DB Records: " + dbManager.getSavedGenerationsCount());
+            return true;
         }
+        return false;
     }
 
     // ── Codebase loading methods ───────────────────────────────────────────
@@ -610,7 +581,6 @@ public class SimulatorUI extends JFrame {
                     btnOneGen.setEnabled(true);
                     btnMultiGen.setEnabled(true);
                     btnReset.setEnabled(true);
-                    btnInit.setText("🧫  Reinit Random");
                 } catch (Exception ex) {
                     appendLog("⚠ Error loading codebase: " + ex.getMessage() + "\n");
                 }

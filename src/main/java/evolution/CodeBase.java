@@ -17,8 +17,7 @@ import java.util.Random;
 public class CodeBase {
 
     // ── Constants ──────────────────────────────────────────────────────────
-    public  static final int    GENOME_LENGTH   = 8;   // Bits per genome
-    public  static final int    INITIAL_SIZE    = 10;  // Starting population
+
     private static final double MUTATION_RATE   = 0.1; // 10% per bit
     private static final Random RNG             = new Random();
 
@@ -30,27 +29,6 @@ public class CodeBase {
         modules = new ArrayList<>();
     }
 
-    /**
-     * INITIALIZE: Seed the population with random modules.
-     * Mixes BasicModules and AdvancedModules for diversity.
-     *
-     * Biological analogy: Genesis — first generation of organisms
-     * arising from random genetic sequences.
-     */
-    public void initialize() {
-        modules.clear();
-        for (int i = 0; i < INITIAL_SIZE; i++) {
-            String genome = randomGenome();
-            Module m;
-            // Mix of basic and advanced organisms
-            if (i % 3 == 0) {
-                m = new AdvancedModule("Adv-" + (i + 1), genome, MUTATION_RATE);
-            } else {
-                m = new BasicModule("Mod-" + (i + 1), genome, MUTATION_RATE);
-            }
-            modules.add(m);
-        }
-    }
 
     /**
      * LOAD EXTERNAL MODULES: Replace population with loaded codebases.
@@ -67,17 +45,6 @@ public class CodeBase {
         modules.addAll(loadedModules);
     }
 
-    /**
-     * Generate a random binary string of GENOME_LENGTH bits.
-     * Biological analogy: random DNA sequence at birth.
-     */
-    private String randomGenome() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < GENOME_LENGTH; i++) {
-            sb.append(RNG.nextInt(2)); // 0 or 1
-        }
-        return sb.toString();
-    }
 
     /**
      * NATURAL SELECTION: Remove the bottom 30% weakest modules.
@@ -110,7 +77,24 @@ public class CodeBase {
         List<Module> offspring = new ArrayList<>();
 
         for (int i = 0; i < reproduceCount; i++) {
-            offspring.add(modules.get(i).copy()); // Polymorphic copy()
+            Module parent1 = modules.get(i);
+            
+            // If it's a LoadedCodeModule and we have at least 2 strong parents, use Crossover
+            if (parent1 instanceof LoadedCodeModule && reproduceCount > 1) {
+                int partnerIndex = RNG.nextInt(reproduceCount);
+                while (partnerIndex == i) {
+                    partnerIndex = RNG.nextInt(reproduceCount);
+                }
+                Module parent2 = modules.get(partnerIndex);
+                
+                if (parent2 instanceof LoadedCodeModule) {
+                    offspring.add(((LoadedCodeModule) parent1).crossover((LoadedCodeModule) parent2));
+                } else {
+                    offspring.add(parent1.copy());
+                }
+            } else {
+                offspring.add(parent1.copy()); // Polymorphic copy() for non-loaded modules
+            }
         }
         modules.addAll(offspring);
     }

@@ -18,16 +18,9 @@ class CodeBaseTest {
     }
 
     @Test
-    void testInitialize() {
-        codeBase.initialize();
-        assertEquals(CodeBase.INITIAL_SIZE, codeBase.size(), "CodeBase size should equal INITIAL_SIZE after initialization.");
-        assertFalse(codeBase.isEmpty(), "CodeBase should not be empty after initialization.");
-    }
-
-    @Test
     void testLoadExternalModules() {
         List<Module> modules = new ArrayList<>();
-        modules.add(new BasicModule("TestMod", "10101010", 0.1));
+        modules.add(new LoadedCodeModule("TestMod", 0.1, "path", "display", 100, 10, "class Test {}"));
         
         codeBase.loadExternalModules(modules);
         
@@ -45,7 +38,12 @@ class CodeBaseTest {
 
     @Test
     void testRemoveWeakest() {
-        codeBase.initialize();
+        List<Module> modules = new ArrayList<>();
+        modules.add(new LoadedCodeModule("Mod1", 0.1, "path1", "disp1", 100, 10, "class Mod1 {}"));
+        modules.add(new LoadedCodeModule("Mod2", 0.1, "path2", "disp2", 100, 10, "class Mod2 {}"));
+        modules.add(new LoadedCodeModule("Mod3", 0.1, "path3", "disp3", 100, 10, "class Mod3 {}"));
+        codeBase.loadExternalModules(modules);
+        
         for (Module m : codeBase.getModules()) {
             m.evaluateFitness();
         }

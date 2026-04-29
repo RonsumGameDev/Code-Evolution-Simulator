@@ -57,19 +57,18 @@ public class CodeLoader {
         for (File file : supportedFiles) {
             try {
                 String fileContent = readFileAsString(file);
-                String genome = generateGenome(fileContent);
                 String relativePath = rootDirectory.toPath().relativize(file.toPath()).toString();
                 String moduleName = relativePath.replace(File.separatorChar, '_').replace('.', '_');
                 int linesOfCode = countLines(fileContent);
 
                 Module module = new LoadedCodeModule(
                     moduleName,
-                    genome,
                     MUTATION_RATE,
                     file.getAbsolutePath(),
                     relativePath,
                     fileContent.length(),
-                    linesOfCode
+                    linesOfCode,
+                    fileContent
                 );
                 modules.add(module);
             } catch (IOException e) {
@@ -156,57 +155,7 @@ public class CodeLoader {
         return count;
     }
 
-    /**
-     * Convert file content into a binary genome string.
-     *
-     * Approach:
-     *   1. Use file length as basis (shorter files = fewer genes)
-     *   2. Convert each byte to binary (8 bits)
-     *   3. XOR fold to compress into reasonable size
-     *   4. Result: deterministic, repeatable genome from any file
-     *
-     * Example: file with 100 bytes might produce 64-bit genome
-     *
-     * @param fileContent the file's text content
-     * @return binary string genome (e.g., "1010110101")
-     */
-    public static String generateGenome(String fileContent) {
-        if (fileContent == null || fileContent.isEmpty()) {
-            return generateDefaultGenome();
-        }
 
-        // Convert content to bytes and get hash-like values
-        byte[] bytes = fileContent.getBytes();
-        int length = Math.max(MIN_FILE_SIZE, bytes.length);
-
-        // Target genome length: proportional to file size, capped at 32 bits
-        int targetLength = Math.min(32, Math.max(8, length / 16));
-
-        // XOR fold: compress bytes into target length
-        byte[] folded = new byte[targetLength];
-        for (int i = 0; i < bytes.length; i++) {
-            folded[i % targetLength] ^= bytes[i];
-        }
-
-        // Convert bytes to binary string
-        StringBuilder genome = new StringBuilder();
-        for (byte b : folded) {
-            // Use only lower 4 bits for simpler patterns
-            for (int i = 3; i >= 0; i--) {
-                genome.append((b >> i) & 1);
-            }
-        }
-
-        return genome.toString();
-    }
-
-    /**
-     * Generate a default genome for empty files.
-     * @return simple binary string
-     */
-    private static String generateDefaultGenome() {
-        return "00000000"; // 8 bits of zeros
-    }
 
     /**
      * Simulate GitHub URL loading (conceptual).

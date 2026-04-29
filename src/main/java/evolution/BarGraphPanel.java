@@ -67,17 +67,6 @@ public class BarGraphPanel extends JPanel {
         g2.setFont(new Font("Monospaced", Font.BOLD, 13));
         g2.drawString("Current Population Fitness", MARGIN_LEFT, 20);
 
-        // ── Legend ─────────────────────────────────────────────────────────
-        g2.setFont(new Font("Monospaced", Font.PLAIN, 11));
-        g2.setColor(COLOR_BASIC);
-        g2.fillRect(w - 200, 10, 12, 12);
-        g2.setColor(COLOR_TEXT);
-        g2.drawString("BasicModule", w - 184, 21);
-
-        g2.setColor(COLOR_ADVANCED);
-        g2.fillRect(w - 80, 10, 12, 12);
-        g2.setColor(COLOR_TEXT);
-        g2.drawString("Advanced", w - 64, 21);
 
         // ── Axes ───────────────────────────────────────────────────────────
         g2.setColor(COLOR_AXIS);
@@ -146,9 +135,9 @@ public class BarGraphPanel extends JPanel {
             int x = MARGIN_LEFT + (i + 1) * spacing - barW / 2;
             int y = MARGIN_TOP  + plotH - barH;
 
-            // Fill color by type
-            Color fill   = (m instanceof AdvancedModule) ? COLOR_ADVANCED : COLOR_BASIC;
-            Color border = (m instanceof AdvancedModule) ? COLOR_ADV_B    : COLOR_BASIC_B;
+            // Fill color
+            Color fill   = COLOR_BASIC;
+            Color border = COLOR_BASIC_B;
 
             // Gradient effect
             GradientPaint gp = new GradientPaint(
