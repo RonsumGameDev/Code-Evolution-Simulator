@@ -1,0 +1,19 @@
+Sample Algorithm Documentation
+===============================
+
+This is design documentation for the sample utilities module.
+
+Key Components:
+- StringUtils: String manipulation and validation
+- ArrayUtils: Array sorting and aggregation
+- Calculator: Basic arithmetic with caching
+
+Design Patterns Used:
+- Singleton: Calculator instance
+- Memoization: Result caching
+- Utility Pattern: Static methods
+
+Performance Considerations:
+- Bubble sort: O(n^2) - consider merge sort
+- Cache: Reduces duplicate computations
+- Array operations: Optimized for memory access
