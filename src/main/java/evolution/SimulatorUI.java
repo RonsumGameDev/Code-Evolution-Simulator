@@ -173,7 +173,7 @@ public class SimulatorUI extends JFrame {
         // Left: control panel
         JPanel controlPanel = buildControlPanel();
         JScrollPane controlScroll = new JScrollPane(controlPanel);
-        controlScroll.setPreferredSize(new Dimension(245, 0));
+        controlScroll.setPreferredSize(new Dimension(290, 0));
         controlScroll.setBorder(null);
         controlScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         centerRow.add(controlScroll, BorderLayout.WEST);
